@@ -1,4 +1,4 @@
-" use client";
+"use client"
 
 import { useRouter} from "next/navigation"
 import { motion } from "framer-motion";
@@ -24,9 +24,9 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center h-screen bg-blue-100 text-gray-900">
-      <section className="flex flex-col items-center justify-center h-screen text-gray-900">
-        <h1 className="text-4xl font-bold">Welcome to Machabeng game day score tracker</h1>
+    <main className="flex flex-col items-center justify-center h-screen bg-blue-100 text-gray-900 p-2">
+      <section className="flex flex-col items-center justify-center h-screen text-gray-900 text-center">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Welcome to Machabeng game day score tracker</h1>
         <p className="mt-4 text-lg">Track score easily and stay updated!</p>
 
       
@@ -38,7 +38,7 @@ export default function Home() {
 
       <div ref={cardSectionRef} className="flex flex-col items-center w-full mt-12">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {["Admin", "Secondery Users", "Primary Users"].map((role, index) => (
+          {["Admin", "Secondary User", "Primary Users"].map((role, index) => (
             <motion.div 
               key={role}
               className="flex justify-center"

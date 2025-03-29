@@ -1,6 +1,7 @@
 "use client";
 
 import {useEffect, useState} from "react";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps  {
     defaultRole: string;
@@ -10,6 +11,7 @@ export default function LoginForm({defaultRole}: LoginFormProps){
     const [email, setEmail] =  useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const router = useRouter();
     
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -20,15 +22,30 @@ export default function LoginForm({defaultRole}: LoginFormProps){
             return;
         }
 
-        console.log("Loggin in as ${defaultRole} with:", {email, password});
+        console.log(`Loggin in as ${defaultRole} with:`, {email, password});
+
+        switch (defaultRole.toLowerCase()){
+            case "admin":
+                router.push("/dashboard/admin");
+                break;
+            case "secondary user":
+                router.push("/dashboard/secondary");
+                break
+            case "primary user":
+                router.push("/dashboard/primary");
+                break
+            default:
+                setError("Invalid role");
+                
+        }
     };
 
     return ( 
-         <form onSubmit={handleSubmit} className="space-y-4">
+         <form onSubmit={handleSubmit} className="space-y-3 text-gray-600">
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
                 <div>
-                    <label className="block text-sm font-medium">Email</label>
+                    <label className="block text-sm font-bold py-3">Email</label>
                     <input
                         type="email"
                         className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2-blue-400"
@@ -37,7 +54,7 @@ export default function LoginForm({defaultRole}: LoginFormProps){
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium">Password</label>
+                    <label className="block text-sm font-bold py-3">Password</label>
                     <input
                         type="password"
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2-blue-400"
@@ -50,7 +67,7 @@ export default function LoginForm({defaultRole}: LoginFormProps){
                     className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
                     type="submit"
                     >
-                        Submit as {defaultRole}
+                        Submit 
                     </button>
                 </div>
             </form>
