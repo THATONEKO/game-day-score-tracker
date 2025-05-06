@@ -10,7 +10,7 @@ export default function AdminDashboard(){
     
     const [email, setEmail] = useState("");
     const [emailList, setEmailList] = useState<string[]>([]);
-    const [selectedSport, setSelectedSport] = useState<string | null>(null);
+    const [selectedSport, setSelectedSport] = useState("");
     const [activeSports, setActiveSports] = useState<{ name: string; done: boolean }[]>([]);
     
     const handleAddEmail = () => {
@@ -24,11 +24,13 @@ export default function AdminDashboard(){
         setEmailList(emailList.filter((email) => email!== emailToRemove));
     }
 
-    const handleActiveSport = () => {
-        if (selectedSport && !activeSports.some((sport) => sport.name !== selectedSport)) {
-            setActiveSports([...activeSports, { name: selectedSport, done: false}]);
-            setSelectedSport(null);
-        }
+    const handleActivateSport = () => {
+        if (!selectedSport) return;
+
+        
+        setActiveSports(prev => [...prev, { name: selectedSport, done: false}]);
+        setSelectedSport("");
+        
     };
 
     const handleRemoveSport = (sportToRemove: string) => {
@@ -127,7 +129,7 @@ export default function AdminDashboard(){
                 </div>
                 
                 <button
-                  onClick={handleActiveSport}
+                  onClick={handleActivateSport}
                   className="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 w-full mt-3"
                 >
                     Activate
