@@ -16,8 +16,8 @@ export default function Home() {
   }
 
   const handleCardClick = (role: string) => {
-    if (role === "Primary User") {
-      router.push("/primary-dashboard");
+    if (role === "Primary Users") {
+      router.push("/dashboard/primary");
     } else {
       router.push(`/login?role=${role}`);
     }

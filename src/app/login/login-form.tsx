@@ -31,9 +31,6 @@ export default function LoginForm({defaultRole}: LoginFormProps){
             case "secondary user":
                 router.push("/dashboard/secondary");
                 break
-            case "primary user":
-                router.push("/dashboard/primary");
-                break
             default:
                 setError("Invalid role");
                 
