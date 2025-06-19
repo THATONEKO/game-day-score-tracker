@@ -1,58 +1,56 @@
 "use client"
 
+import Image from  "next/image";
 import { useRouter } from "next/navigation";
 
-export default function SecondaryDashboard() {
+const sport = [
+  { name: "Basketball", path: "basketball", icon: "/sports-icons/basketball.png" },
+  { name: "Soccer", path: "soccer", icon: "/sports-icons/soccer.png" },
+  { name: "Racing", path: "racing", icon: "/sports-icons/racing.png" },
+  { name: "Speed Walk", path: "speedwalk", icon: "/sports-icons/speedwalk.png" },
+  { name: "Short Put", path: "shortput", icon: "/sports-icons/shortput.png" },
+  { name: "Long Jump", path: "longjump", icon: "/sports-icons/longjump.png" },
+]
+
+export default function SecondaryDasboard() {
     const router = useRouter();
 
     const handleNavigate = (path: string) => {
-        router.push('/dashboard/secondary/sports/${path}');
+        router.push(`/dashboard/secodary/sports/${path}`);
     };
 
     return (
         <div className="p-6">
-            <h1 className="text-2xl font-bold mb-6">Secodary User Dashboard</h1>
+            <h1>Secondary User Dashboard</h1>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <button
-                    onClick={() => handleNavigate("basketball")}
-                    className="text-black p-4 bg-white rounded shadow hover:bg-blue-100"              
-                >
-                    Record Basketball Scores
-                </button>
+            <div className="space-y-6">
+                {sport.map((sport, idx) =>
+                    <div
+                        key={sport.name}
+                        className={`flex ${
+                            idx % 2 === 0 ? "justify-start" : "justify-end"
+                        }`}
+                    >
+                        <button
+                            onClick={() => handleNavigate(sport.path)}
+                            className="w-40 h-40 bg-white rounded-lg shadow-lg flex flex-col items-center justify-center hover:scale-105 transition-transform"
+                        >
+                            <Image
+                                src={sport.icon}
+                                alt={sport.name}
+                                width={60}
+                                height={60}
+                                className="mb-3"
+                            />
+                            <span className="text-lg font-semibold text-gray-800 text-center">
+                                {sport.name}
+                            </span>
 
-                <button
-                    onClick={() => handleNavigate("soccer")}
-                    className="text-black p-4 bg-white rounded shadow hover:bg-purple-100"
-                >
-                    Record Soccer Scores
-                </button>
-                <button
-                    onClick={() => handleNavigate("racing")}
-                    className="text-black p-4 bg-white rounded shadow hover:bg-purple-100"
-                >
-                    Record Springting Scores
-                </button>
-                <button
-                    onClick={() => handleNavigate("speedwalk")}
-                    className="text-black p-4 bg-white rounded shadow hover:bg-purple-100"
-                >
-                    Record Speed Walk
-                </button>
-                <button 
-                    onClick={() => handleNavigate("shortput")}
-                    className="text-black p-4 bg-white rounded shadow hover:bg-purple-100"
-                >
-                    Record Short Put
-                </button>
-                <button
-                    onClick={() => handleNavigate("longjump")}
-                    className="text-black p-4 bg-white rounded shadow hover:bg-red-100"
-                >
-                    Record Long jump
-                </button>
+                        </button>
+
+                    </div>
+                )}
             </div>
-
         </div>
-    )
+    );
 }
