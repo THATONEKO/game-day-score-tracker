@@ -158,7 +158,7 @@ export default function SportsCompetitionDashboard() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-            <div className="max-w-7xl mx-auto">
+            <div className="w-full">
                 {/* Header */}
                 <motion.div 
                     initial={{ opacity: 0, y: -20 }}
@@ -175,7 +175,7 @@ export default function SportsCompetitionDashboard() {
                     </div>
                 </motion.div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
                     {/* Main Leaderboard */}
                     <div className="lg:col-span-1">
                         <motion.div 
@@ -188,7 +188,7 @@ export default function SportsCompetitionDashboard() {
                                 <h2 className="text-2xl font-bold text-white">Overall Rankings</h2>
                             </div>
                             
-                            <div className="space-y-4">
+                            <div className="space-y-4 w-full">
                                 <AnimatePresence>
                                     {sortedTeams.map((team, index) => (
                                         <motion.div
@@ -198,7 +198,7 @@ export default function SportsCompetitionDashboard() {
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0 }}
                                             transition={{ duration: 0.4 }}
-                                            className="relative overflow-hidden rounded-xl"
+                                            className="relative overflow-hidden rounded-xl w-full"
                                         >
                                             <div className={`bg-gradient-to-r ${team.bgGradient} p-4 text-white relative`}>
                                                 <div className="flex justify-between items-center">

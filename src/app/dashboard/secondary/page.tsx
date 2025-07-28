@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, CheckCircle, Clock, Settings, Trophy, Users } from "lucide-react";
@@ -47,7 +48,7 @@ const initialSports: SportStatus[] = [
     name: "Racing", 
     path: "racing", 
     icon: "🏃",
-    backgroundImage: "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+    backgroundImage: "/backgrounds/racing.jpg",
     activated: true, 
     completed: false, 
     isRecording: false,
@@ -59,10 +60,10 @@ const initialSports: SportStatus[] = [
     name: "Speed Walk", 
     path: "speedwalk", 
     icon: "🚶",
-    backgroundImage: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    activated: false, 
+    backgroundImage: "/backgrounds/speedwalk.jpg",
+    activated: true, 
     completed: false, 
-    isRecording: false,
+    isRecording: true,
     startTime: "16:15",
     participants: 24,
     maxPoints: 80
@@ -71,10 +72,10 @@ const initialSports: SportStatus[] = [
     name: "Shot Put", 
     path: "shotput", 
     icon: "🥎",
-    backgroundImage: "https://images.unsplash.com/photo-1594736797933-d0c6b5e5a361?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    activated: false, 
+    backgroundImage: "/backgrounds/shotput.webp",
+    activated: true, 
     completed: false, 
-    isRecording: false,
+    isRecording: true,
     startTime: "16:45",
     participants: 16,
     maxPoints: 70
@@ -83,10 +84,10 @@ const initialSports: SportStatus[] = [
     name: "Long Jump", 
     path: "longjump", 
     icon: "🤸",
-    backgroundImage: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    activated: false, 
+    backgroundImage: "/backgrounds/longjump.jpg",
+    activated: true, 
     completed: false, 
-    isRecording: false,
+    isRecording: true,
     startTime: "17:15",
     participants: 20,
     maxPoints: 85
@@ -96,10 +97,12 @@ const initialSports: SportStatus[] = [
 export default function SportsCompetitionDashboard() {
     const [sports, setSports] = useState<SportStatus[]>(initialSports);
 
+    const router = useRouter();
+
     const handleNavigate = (path: string) => {
         // Simulate navigation
-        console.log(`Navigating to: /dashboard/secondary/sports/${path}`);
-    };
+       router.push(`/dashboard/secondary/sports/${path}`);
+};
 
     const handleStartRecording = (sportName: string) => {
         setSports(prevSports =>
@@ -207,125 +210,118 @@ export default function SportsCompetitionDashboard() {
             
             {/* Sports Grid */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {sports.map((sport, index) => (
-                <motion.div
-  key={sport.name}
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ delay: index * 0.1 }}
-  className="group relative rounded-2xl overflow-hidden cursor-pointer min-h-[320px] sm:aspect-[4/3]"
-  onClick={() => handleNavigate(sport.path)}
->
-  {/* Background Image */}
-  <div
-    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-    style={{ backgroundImage: `url(${sport.backgroundImage})` }}
-  />
-
-  {/* Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-  {/* Content */}
-  <div className="absolute inset-0 px-3 pt-4 pb-5 sm:p-6 flex flex-col justify-between">
-    {/* Status & Settings */}
-    <div className="flex items-start justify-between">
-      {getStatusBadge(sport)}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleToggleActivation(sport.name);
-        }}
-        className={`p-2 rounded-full backdrop-blur-sm border transition-all ${
-          sport.activated
-            ? "bg-green-500/20 border-green-400/30 text-green-400"
-            : "bg-gray-500/20 border-gray-400/30 text-gray-400"
-        }`}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-10 xl:gap-14">
+    {sports.map((sport, index) => (
+      <motion.div
+        key={sport.name}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.1 }}
+        className="group relative rounded-2xl overflow-hidden cursor-pointer h-[300px] sm:h-[360px] md:h-[400px]"
+        onClick={() => handleNavigate(sport.path)}
       >
-        <Settings className="w-4 h-4" />
-      </button>
-    </div>
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+          style={{ backgroundImage: `url(${sport.backgroundImage})` }}
+        />
 
-    {/* Sport Info */}
-    <div className="text-center">
-      <div className="text-5xl sm:text-6xl mb-2 sm:mb-3 drop-shadow-lg">{sport.icon}</div>
-      <h3 className="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2 drop-shadow-lg">
-        {sport.name}
-      </h3>
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-300">
-        <div className="flex items-center gap-1">
-          <Users className="w-4 h-4" />
-          <span>{sport.participants} participants</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Trophy className="w-4 h-4" />
-          <span>{sport.maxPoints} pts max</span>
-        </div>
-      </div>
-    </div>
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-    {/* Button Section */}
-    <div className="flex flex-col gap-2 sm:gap-3">
-      {sport.startTime && !sport.completed && (
-        <div className="text-center text-white/80 text-xs sm:text-sm">
-          {sport.isRecording ? "Started" : "Starts"} at {sport.startTime}
-        </div>
-      )}
+        {/* Content */}
+        <div className="absolute inset-0 flex flex-col justify-between px-3 pt-4 pb-5 sm:p-6">
+          {/* Top Section */}
+          <div className="flex items-start justify-between">
+            {getStatusBadge(sport)}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleToggleActivation(sport.name);
+              }}
+              className={`p-2 rounded-full backdrop-blur-sm border transition-all ${
+                sport.activated
+                  ? "bg-green-500/20 border-green-400/30 text-green-400"
+                  : "bg-gray-500/20 border-gray-400/30 text-gray-400"
+              }`}
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+          </div>
 
-      {sport.endTime && sport.completed && (
-        <div className="text-center text-green-400 text-xs sm:text-sm">
-          Completed at {sport.endTime}
-        </div>
-      )}
-
-      <AnimatePresence>
-        {sport.activated && !sport.completed && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleStartRecording(sport.name);
-            }}
-            className={`w-full py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold backdrop-blur-sm border transition-all text-xs sm:text-sm ${
-              sport.isRecording
-                ? "bg-red-500/20 border-red-400/30 text-red-400 hover:bg-red-500/30"
-                : "bg-green-500/20 border-green-400/30 text-green-400 hover:bg-green-500/30"
-            }`}
-          >
-            <div className="flex items-center justify-center gap-1 sm:gap-2">
-              {sport.isRecording ? (
-                <>
-                  <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-400 rounded-sm" />
-                  <span className="tracking-tight">Stop Recording</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-4 h-4" />
-                  <span className="tracking-tight">Start Recording</span>
-                </>
-              )}
+          {/* Center Info */}
+          <div className="text-center mt-2">
+            <div className="text-5xl sm:text-6xl mb-2 sm:mb-3 drop-shadow-lg">{sport.icon}</div>
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2 drop-shadow-lg">
+              {sport.name}
+            </h3>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-300">
+              <div className="flex items-center gap-1">
+                <Users className="w-4 h-4" />
+                <span>{sport.participants} participants</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Trophy className="w-4 h-4" />
+                <span>{sport.maxPoints} pts max</span>
+              </div>
             </div>
-          </motion.button>
-        )}
-      </AnimatePresence>
+          </div>
 
-      {sport.completed && (
-        <div className="w-full py-2 sm:py-3 rounded-xl font-semibold backdrop-blur-sm border bg-green-500/20 border-green-400/30 text-green-400 text-center text-xs sm:text-sm">
-          <div className="flex items-center justify-center gap-2">
-            <CheckCircle className="w-4 h-4" />
-            View Results
+          {/* Bottom Buttons */}
+          <div className="flex flex-col gap-2 sm:gap-3 mt-4">
+            {sport.startTime && !sport.completed && (
+              <div className="text-center text-white/80 text-xs sm:text-sm">
+                Starts at {sport.startTime}
+              </div>
+            )}
+
+            {sport.endTime && sport.completed && (
+              <div className="text-center text-green-400 text-xs sm:text-sm">
+                Completed at {sport.endTime}
+              </div>
+            )}
+
+            <AnimatePresence>
+              {sport.activated && !sport.completed && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNavigate(sport.path); // Go to recording
+                  }}
+                  className="w-full py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold backdrop-blur-sm border transition-all text-xs sm:text-sm bg-green-500/20 border-green-400/30 text-green-400 hover:bg-green-500/30"
+                >
+                  <div className="flex items-center justify-center gap-1 sm:gap-2">
+                    <Play className="w-4 h-4" />
+                    <span className="tracking-tight">Start Recording</span>
+                  </div>
+                </motion.button>
+              )}
+            </AnimatePresence>
+
+            {sport.completed && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNavigate(sport.path); // Go to results
+                }}
+                className="w-full py-2 sm:py-3 rounded-xl font-semibold backdrop-blur-sm border bg-green-500/20 border-green-400/30 text-green-400 text-center text-xs sm:text-sm"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  View Results
+                </div>
+              </button>
+            )}
           </div>
         </div>
-      )}
-    </div>
+      </motion.div>
+    ))}
   </div>
-</motion.div>
-                ))}
-            </div>
-            </div>
-
-        </div>
+</div>
+ </div>
     );
-}
+
+  }
