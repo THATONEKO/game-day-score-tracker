@@ -27,13 +27,40 @@ export default function AdminDashboard() {
   const [selectedSport, setSelectedSport] = useState("");
   const [activeSports, setActiveSports] = useState<{ name: string; done: boolean }[]>([]);
 
-  const handleAddUser = () => {
-    if (formData.email && !users.some((u) => u.email === formData.email)) {
-      setUsers([...users, formData]);
-      setFormData({ name: "", surname: "", email: "", grade: "IB1" });
-      setModalOpen(false);
-    }
+ const handleAddUser = async () => {
+  if (!formData.email || !formData.name || !formData.surname) return;
+  const adminId = localStorage.getItem("adminId") as string;
+  const admin = Number(adminId)
+
+  const completeForm = {
+    ...formData,
+    adminId: admin// ✅ Replace with a real admin ID from your DB
   };
+
+  try {
+    const response = await fetch("http://localhost:3001/api/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(completeForm),
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      alert(err.error || "Error creating user");
+      return;
+    }
+
+    const newUser = await response.json();
+    setUsers([...users, newUser]);
+    setFormData({ name: "", surname: "", email: "", grade: "IB1"});
+    setModalOpen(false);
+  } catch (err) {
+    alert("Network error");
+    console.error(err);
+  }
+};
+
+  
 
   const handleRemoveUser = (emailToRemove: string) => {
     setUsers(users.filter((u) => u.email !== emailToRemove));

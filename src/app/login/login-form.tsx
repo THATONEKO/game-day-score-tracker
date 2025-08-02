@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
@@ -18,6 +18,7 @@ export default function LoginForm({ defaultRole }: LoginFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
     if (!email || !password) {
       setError("Please fill in all fields");
@@ -25,18 +26,45 @@ export default function LoginForm({ defaultRole }: LoginFormProps) {
       return;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        credentials: "include", // This ensures cookies are saved (needed for sessions)
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    switch (defaultRole.toLowerCase()) {
-      case "admin":
-        router.push("/dashboard/admin");
-        break;
-      case "secondary user":
-        router.push("/dashboard/secondary");
-        break;
-      default:
-        setError("Invalid role");
+
+      const data = await response.json();
+      console.log(data)
+      localStorage.setItem("adminId", data.adminId);
+
+      if (!response.ok) {
+        setError(data.message || "Login failed");
         setIsLoading(false);
+        return;
+      }
+
+      // Save JWT token (you can also use cookies if you prefer)
+      localStorage.setItem("token", data.token);
+
+      // Redirect based on role
+      switch (defaultRole.toLowerCase()) {
+        case "admin":
+          router.push("/dashboard/admin");
+          break;
+        case "secondary user":
+          router.push("/dashboard/secondary");
+          break;
+        default:
+          router.push("/dashboard");
+      }
+    } catch (error) {
+      setError("Network error. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 

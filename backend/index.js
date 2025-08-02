@@ -9,7 +9,11 @@ const userRoutes = require("./routes/userRoutes");
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(cors());               // Allow requests from frontend
+// app.use(cors());               // Allow requests from frontend
+app.use(cors({
+  origin: "http://localhost:3000", // Frontend origin
+  credentials: true               // Allow credentials like cookies
+}));
 app.use(express.json());       // Parse JSON bodies
 
 // Base route
@@ -33,3 +37,14 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`✅ Backend server running at http://localhost:${PORT}`);
 });
+
+const session = require("express-session");
+
+app.use(
+  session({
+    secret: "your_secret_key", // put this in .env for security
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }, // set to true in production with HTTPS
+  })
+);
