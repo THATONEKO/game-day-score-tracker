@@ -49,4 +49,38 @@ router.post("/logout", (req, res) => {
   });
 });
 
+router.post("/login-secondary", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // req.session.user = {
+    //   id: user.id,
+    //   email: user.email,
+    //   adminId: user.adminId,
+    //   name: user.name,
+    //   role: "secondary",
+    // };
+
+    res.json({
+      message: "Secondary user logged in",
+      user: user,
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 module.exports = router;

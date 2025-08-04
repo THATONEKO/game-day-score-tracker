@@ -2,39 +2,45 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-
+import { useParams } from "next/navigation";
 interface LoginFormProps {
   defaultRole: string;
 }
 
 export default function LoginForm({ defaultRole }: LoginFormProps) {
   const [email, setEmail] = useState("");
+  const [baseurl, setBaseurl] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const params = useParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
+    console.log(params)
     if (!email || !password) {
       setError("Please fill in all fields");
       setIsLoading(false);
       return;
     }
 
+    console.log(defaultRole)
     try {
-      const response = await fetch("http://localhost:3001/api/auth/login", {
+      const roleEndpoint = defaultRole.toLowerCase() === "admin" ? "login" : "login-secondary";
+
+      const response = await fetch(`http://localhost:3001/api/auth/${roleEndpoint}`,{
         method: "POST",
-        credentials: "include", // This ensures cookies are saved (needed for sessions)
+        credentials: "include",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type" : "application/json",
         },
         body: JSON.stringify({ email, password }),
-      });
+    });
 
 
       const data = await response.json();
