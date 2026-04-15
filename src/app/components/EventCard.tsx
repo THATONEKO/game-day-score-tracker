@@ -26,10 +26,36 @@ export default function EventCard({ ageGroup, gender, distance }: EventCardProps
         setResults(newResults);
     };
 
-    const handleSubmit = () => {
-        console.log(`Submitting for ${ageGroup} - ${distance}:`, results);
-        setSubmitted(true);
+    
+    const handleSubmit = async () => {
+        try {
+            const response = await fetch("/api/results", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    ageGroup,
+                    gender,
+                    distance,
+                    results,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error("Server returned error:", data);
+                return;
+            }
+
+            console.log(data);
+            setSubmitted(true);
+        } catch (error) {
+            console.error("Failed to submit results:", error);
+        }
     };
+        
 
     const handleToggle = () => {
         setSubmitted(!submitted);

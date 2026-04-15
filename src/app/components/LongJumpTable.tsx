@@ -70,6 +70,38 @@ export default function FieldEventTable({ title = "Field Event" }: { title?: str
         const currentDistance = parseFloat(distance);
         return !isNaN(currentDistance) && currentDistance === bestDistance && bestDistance > 0;
     };
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+
+        try {
+            const entries = Object.keys(selectedTeams).map((key) => ({
+            team: selectedTeams[key],
+            name: names[key] || "",
+            distance: distances[key] || "",
+        }));
+
+        const response = await fetch("/api/results", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                eventType: "field",
+                title,
+                entries,
+            }),
+         });
+
+        } catch (error) {
+            console.error("Failed to submit field event:", error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-3">
@@ -225,6 +257,13 @@ export default function FieldEventTable({ title = "Field Event" }: { title?: str
                         })
                     )}
                 </div>
+                <button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    className="w-full h-14 rounded-2xl bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold text-lg shadow-lg"
+                >
+                    {isSubmitting ? "Submitting..." : "🏁 Submit Field Results"}
+                </button>
 
                 {/* Footer */}
                 <div className="text-center mt-8 pb-6">

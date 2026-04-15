@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -12,6 +13,7 @@ model Admin {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+
   users     User[]
 }
 
@@ -25,8 +27,11 @@ model User {
   role      String
   createdAt DateTime @default(now())
 
-  adminId Int
-  admin   Admin @relation(fields: [adminId], references: [id])
+  adminId   Int
+  admin     Admin    @relation(fields: [adminId], references: [id])
+
+  participantsCreated Participant[] @relation("UserParticipants") // ✅ link to Participant.createdBy
+  scoresRecorded      Score[]       @relation("UserScores")       // ✅ link to Score.recordedBy
 }
 
 model Game {
@@ -34,4 +39,46 @@ model Game {
   name      String
   score     Int
   createdAt DateTime @default(now())
+}
+
+
+
+model Participant {
+  id        Int      @id @default(autoincrement())
+  name      String   // Team name or Player name
+  type      String   // "team" or "individual"
+  eventId   Int
+  event     Event    @relation(fields: [eventId], references: [id])
+
+  createdBy Int
+  creator   User     @relation("UserParticipants", fields: [createdBy], references: [id]) // ✅ link back to User
+  createdAt DateTime @default(now())
+
+  scores    Score[]
+}
+
+model Event {
+  id         Int      @id @default(autoincrement())
+  name       String   // e.g., "100m Sprint", "Long Jump"
+  type       String   // "individual" or "team"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  participants Participant[]
+  scores       Score[]
+}
+
+model Score {
+  id            Int      @id @default(autoincrement())
+  points        Int
+  recordedAt    DateTime @default(now())
+
+  participantId Int
+  participant   Participant @relation(fields: [participantId], references: [id])
+
+  recordedBy    Int
+  recorder      User        @relation("UserScores", fields: [recordedBy], references: [id]) 
+
+  eventId       Int
+  event         Event       @relation(fields: [eventId], references: [id])  // ✅ Added relation back to Event
 }
