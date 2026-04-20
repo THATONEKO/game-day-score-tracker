@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Check, Trophy, Users } from "lucide-react";
 
-const teams = ["Falcons", "Ravens", "Eagles", "Vultures"];
+const teams = ["Falcons", "Ravens", "Eagles", "hawks"];
 
 type Match = {
     teamA: string;
@@ -40,9 +40,21 @@ export default function MatchTable() {
         }
     };
 
-    const submitScore = (index: number) => {
+    const submitScore = async(index: number) => {
         const updated = [...matches];
         if (updated[index].scoreA !== "" && updated[index].scoreB !== "") {
+            await fetch("http://localhost:8000/api/soccer_scores", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                teamA: updated[index].teamA,
+                teamB: updated[index].teamB,
+                scoreA: updated[index].scoreA,
+                scoreB: updated[index].scoreB
+            })
+        });
             updated[index].isSubmitted = true;
             setMatches(updated);
         }

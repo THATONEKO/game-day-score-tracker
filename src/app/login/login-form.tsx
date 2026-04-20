@@ -59,7 +59,6 @@ export default function LoginForm({ defaultRole }: LoginFormProps) {
 
       console.log(`role is ${defaultRole}`)
 
-
       // Redirect based on role
       switch (defaultRole.toLowerCase()) {
         case "admin":

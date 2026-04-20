@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Trophy, Target, Award, Zap, Check } from 'lucide-react';
 
-const teams = ["Falcons", "Vultures", "Ravens", "Eagles"];
+const teams = ["Falcons", "hawks", "Ravens", "Eagles"];
 
 type Match = {
     teamA: string;
@@ -36,13 +36,27 @@ export default function BasketballTable() {
         }
     };
 
-    const submitScore = (index: number) => {
-        const updated = [...matches];
-        if (updated[index].scoreA !== "" && updated[index].scoreB !== "") {
-            updated[index].isSubmitted = true;
-            setMatches(updated);
-        }
-    };
+    const submitScore = async (index: number) => {
+    const updated = [...matches];
+
+    if (updated[index].scoreA !== "" && updated[index].scoreB !== "") {
+        await fetch("http://localhost:8000/api/basketball_scores", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                teamA: updated[index].teamA,
+                teamB: updated[index].teamB,
+                scoreA: updated[index].scoreA,
+                scoreB: updated[index].scoreB,
+            })
+        });
+
+        updated[index].isSubmitted = true;
+        setMatches(updated);
+    }
+};
 
     const completedMatches = matches.filter(m => m.isSubmitted).length;
     const totalMatches = matches.length;

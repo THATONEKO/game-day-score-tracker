@@ -26,7 +26,7 @@ const initialSports: SportStatus[] = [
     icon: "🏀",
     backgroundImage: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
     activated: true, 
-    completed: true, 
+    completed: false, 
     isRecording: false,
     endTime: "14:30",
     participants: 32,
