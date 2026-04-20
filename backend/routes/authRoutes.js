@@ -1,54 +1,39 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
 
-// LOGIN route: stores admin ID in session
+const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // Store in .env
+
+// LOGIN route for admin
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const admin = await prisma.admin.findUnique({ where: { email } });
-   console.log('hello');
-   
+
     if (!admin) return res.status(401).json({ error: "Invalid credentials" });
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
 
-    // ✅ Store admin ID in session
-    // req.session.adminId = admin.id;
+    // ✅ Generate JWT token
+    const token = jwt.sign(
+      { adminId: admin.id, role: "admin" },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-    return res.json({ message: "Login successful", adminId : admin.id });
+    res.json({ message: "Login successful", token });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// GET current logged-in admin
-router.get("/me", (req, res) => {
-  if (!req.session.adminId) {
-    return res.status(401).json({ error: "Not logged in" });
-  }
-
-  res.json({ adminId: req.session.adminId });
-});
-
-// LOGOUT route: destroys session
-router.post("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Logout failed" });
-    }
-
-    res.clearCookie("connect.sid"); // default session cookie name
-    res.json({ message: "Logged out successfully" });
-  });
-});
-
+// LOGIN route for secondary user
 router.post("/login-secondary", async (req, res) => {
   const { email, password } = req.body;
 
@@ -60,27 +45,47 @@ router.post("/login-secondary", async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-
     if (!passwordMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // req.session.user = {
-    //   id: user.id,
-    //   email: user.email,
-    //   adminId: user.adminId,
-    //   name: user.name,
-    //   role: "secondary",
-    // };
+    // ✅ Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, adminId: user.adminId, role: "secondary" },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     res.json({
       message: "Secondary user logged in",
-      user: user,
+      token,
     });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ message: "Something went wrong" });
   }
+});
+
+// GET current logged-in user/admin
+router.get("/me", (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Not logged in" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    res.json(decoded);
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+});
+
+// LOGOUT (JWT just expires on client)
+router.post("/logout", (req, res) => {
+  // For JWT, logout is handled client-side by deleting the token
+  res.json({ message: "Logged out successfully (delete token on client)" });
 });
 
 module.exports = router;

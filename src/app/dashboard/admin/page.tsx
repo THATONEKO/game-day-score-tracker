@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Listbox } from "@headlessui/react";
 import { Check, ChevronDown, Trash, CheckCircle, RotateCcw, X } from "lucide-react";
 
@@ -26,6 +27,8 @@ export default function AdminDashboard() {
     grade: "IB1",
   });
 
+  const router = useRouter();
+
   const [selectedSport, setSelectedSport] = useState("");
   const [activeSports, setActiveSports] = useState<{ name: string; done: boolean }[]>([]);
 
@@ -36,7 +39,7 @@ export default function AdminDashboard() {
 
   const completeForm = {
     ...formData,
-    adminId: admin// ✅ Replace with a real admin ID from your DB
+    adminId: 1// ✅ Replace with a real admin ID from your DB
   };
 
   try {
@@ -86,9 +89,33 @@ export default function AdminDashboard() {
     );
   };
 
+  const handleLogout = async () => {
+  try {
+    await fetch("http://localhost:3001/api/auth/logout", {
+      method: "POST",
+      credentials: "include", // so the session can be destroyed
+    });
+
+    // Clear localStorage or sessionStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("adminId");
+
+    // Redirect to login page
+    router.push("/login");
+  } catch (err) {
+    console.error("Logout failed:", err);
+  }
+};
+
+
   return (
     <div className="min-h-screen p-6 bg-gray-100 flex flex-col items-center">
       <h1 className="text-gray-700 text-2xl font-bold">Admin Dashboard</h1>
+
+    <button onClick={handleLogout}>Logout</button>
 
       {/* Manage Secondary Users */}
       <div className="bg-white p-6 rounded-xl shadow-lg mt-6 w-full max-w-xl">

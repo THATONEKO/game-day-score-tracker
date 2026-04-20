@@ -124,6 +124,40 @@ export default function SportsCompetitionDashboard() {
         );
     };
 
+    const handleLogout = async () => {
+  try {
+    await fetch("http://localhost:3001/api/auth/logout", {
+      method: "POST",
+      credentials: "include", // so the session can be destroyed
+    });
+
+    const role = localStorage.getItem("role");
+
+    if (role) {
+      console.log("User role:", role);
+    } else {
+      console.log("No role found in localStorage.");
+    }
+
+    router.push(`/login?role=${role}`);
+
+    // Clear localStorage or sessionStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("adminId");
+
+    
+
+    // Redirect to login page
+   
+  } catch (err) {
+    console.error("Logout failed:", err);
+  }
+};
+
+
     const getStatusBadge = (sport: SportStatus) => {
         if (sport.completed) {
             return (
@@ -178,6 +212,7 @@ export default function SportsCompetitionDashboard() {
                 <p className="text-gray-300 text-base sm:text-lg mb-4 sm:mb-6">
                 Manage and monitor all sporting activities
                 </p>
+                <button onClick={handleLogout}>Logout</button>
 
                 {/* Stats Overview */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-6 sm:mb-8">

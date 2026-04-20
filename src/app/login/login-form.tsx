@@ -53,7 +53,12 @@ export default function LoginForm({ defaultRole }: LoginFormProps) {
         return;
       }
 
-      // Save JWT token (you can also use cookies if you prefer)(thinking of removing temporarily)
+      // Save JWT token (you can also use cookies if you prefer)
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", defaultRole);
+
+      console.log(`role is ${defaultRole}`)
+
 
       // Redirect based on role
       switch (defaultRole.toLowerCase()) {
