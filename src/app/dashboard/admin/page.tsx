@@ -11,6 +11,7 @@ interface User {
   name: string;
   surname: string;
   email: string;
+  password: string;
   grade: string;
 }
 
@@ -21,6 +22,7 @@ export default function AdminDashboard() {
     name: "",
     surname: "",
     email: "",
+    password:"",
     grade: "IB1",
   });
 
@@ -28,7 +30,7 @@ export default function AdminDashboard() {
   const [activeSports, setActiveSports] = useState<{ name: string; done: boolean }[]>([]);
 
  const handleAddUser = async () => {
-  if (!formData.email || !formData.name || !formData.surname) return;
+  if (!formData.email || !formData.password || !formData.name || !formData.surname) return;
   const adminId = localStorage.getItem("adminId") as string;
   const admin = Number(adminId)
 
@@ -38,7 +40,7 @@ export default function AdminDashboard() {
   };
 
   try {
-    const response = await fetch("http://localhost:3001/api/users", {
+    const response = await fetch("http://localhost:8000/api/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(completeForm),
@@ -52,7 +54,7 @@ export default function AdminDashboard() {
 
     const newUser = await response.json();
     setUsers([...users, newUser]);
-    setFormData({ name: "", surname: "", email: "", grade: "IB1"});
+    setFormData({ name: "", surname: "", email: "",password:"", grade: "IB1",});
     setModalOpen(false);
   } catch (err) {
     alert("Network error");
@@ -108,7 +110,7 @@ export default function AdminDashboard() {
               className="p-3 bg-gray-200 rounded-lg flex justify-between items-center text-gray-800 text-sm mb-2"
             >
               <div>
-                <strong>{user.name} {user.surname}</strong><br />
+                <strong>{user.name} {user.surname} {user.password}</strong><br />
                 {user.email} | Grade: {user.grade}
               </div>
               <button
@@ -233,6 +235,12 @@ export default function AdminDashboard() {
                 className="w-full border p-3 rounded-lg"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
               <select
                 className="w-full border p-3 rounded-lg"

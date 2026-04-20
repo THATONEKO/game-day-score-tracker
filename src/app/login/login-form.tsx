@@ -33,7 +33,7 @@ export default function LoginForm({ defaultRole }: LoginFormProps) {
     try {
       const roleEndpoint = defaultRole.toLowerCase() === "admin" ? "login" : "login-secondary";
 
-      const response = await fetch(`http://localhost:3001/api/auth/${roleEndpoint}`,{
+      const response = await fetch(`http://localhost:8000/api/auth/${roleEndpoint}`,{
         method: "POST",
         credentials: "include",
         headers: {
@@ -53,8 +53,7 @@ export default function LoginForm({ defaultRole }: LoginFormProps) {
         return;
       }
 
-      // Save JWT token (you can also use cookies if you prefer)
-      localStorage.setItem("token", data.token);
+      // Save JWT token (you can also use cookies if you prefer)(thinking of removing temporarily)
 
       // Redirect based on role
       switch (defaultRole.toLowerCase()) {

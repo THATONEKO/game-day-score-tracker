@@ -67,7 +67,7 @@ const initialTeams: Team[] = [
         }
     },
     {
-        name: "Vultures", 
+        name: "Hawks", 
         totalScore: 0, 
         color: "bg-amber-500",
         bgGradient: "from-amber-400 to-orange-600",
